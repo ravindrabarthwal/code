@@ -1,6 +1,7 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
 import { proxy } from 'hono/proxy'
+import { env } from 'hono/adapter';
 
 const app = new Hono();
 
