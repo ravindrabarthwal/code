@@ -36,6 +36,7 @@ You are tasked with creating git commits for the changes made during this sessio
 - Do not include any "Generated with Claude" messages
 - Do not add "Co-Authored-By" lines
 - Write commit messages as if the user wrote them
+- Always follow conventional commit messages
 
 ## Remember:
 - You have the full context of what was done in this session

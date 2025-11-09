@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
+import { proxy } from 'hono/proxy'
 
 const app = new Hono();
 
@@ -16,39 +17,22 @@ app.get('/health', (c) => {
   return c.json({ status: 'healthy', service: 'proxy' });
 });
 
+
 // Proxy all /api/opencode/* requests to OpenCode server
-app.all('/api/opencode/*', async (c) => {
-  const url = new URL(c.req.url);
-
-  // Strip /api/opencode prefix and construct target URL
-  const path = url.pathname.replace(/^\/api\/opencode/, '');
-  const targetUrl = `http://${OPENCODE_HOST}:${OPENCODE_PORT}${path}${url.search}`;
-
-  console.log(`Proxying request: ${c.req.method} ${url.pathname} -> ${targetUrl}`);
-
-  try {
-    // Forward the request
-    const response = await fetch(targetUrl, {
-      method: c.req.method,
-      headers: c.req.raw.headers,
-      body: c.req.raw.body,
-      // @ts-ignore - Bun supports duplex
-      duplex: 'half',
-    });
-
-    // Return the response from OpenCode
-    return new Response(response.body, {
-      status: response.status,
-      headers: response.headers,
-    });
-  } catch (error) {
-    console.error('Proxy error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    return c.json(
-      { error: 'Failed to proxy request', details: errorMessage },
-      502
-    );
-  }
+app.all('/api/opencode/:path', async (c) => {
+  const res = await proxy(
+    `http://${OPENCODE_HOST}:${OPENCODE_PORT}/${c.req.param('path')}`,
+    {
+      headers: {
+        ...c.req.header(), // optional, specify only when forwarding all the request data (including credentials) is necessary.
+        'X-Forwarded-For': '127.0.0.1',
+        'X-Forwarded-Host': c.req.header('host'),
+        Authorization: undefined, // do not propagate request headers contained in c.req.header('Authorization')
+      },
+    }
+  )
+  res.headers.delete('Set-Cookie')
+  return res
 });
 
 // Default route

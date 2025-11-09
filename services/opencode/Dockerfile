@@ -1,9 +1,9 @@
-FROM --platform=linux/amd64 oven/bun:1-alpine
+FROM node:slim
 
 WORKDIR /app
 
-# Install OpenCode globally using bun
-RUN bun add -g opencode-ai
+# Install OpenCode globally
+RUN npm i -g opencode-ai
 
 # Expose OpenCode default port
 EXPOSE 4096
