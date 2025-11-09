@@ -1,0 +1,14 @@
+{
+  "name": "opencode-proxy",
+  "version": "1.0.0",
+  "description": "Reverse proxy layer for OpenCode server",
+  "private": true,
+  "workspaces": [
+    "services/proxy"
+  ],
+  "scripts": {
+    "dev": "docker-compose up --build",
+    "down": "docker-compose down",
+    "logs": "docker-compose logs -f"
+  }
+}
