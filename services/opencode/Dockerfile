@@ -1,4 +1,4 @@
-FROM oven/bun:1-alpine
+FROM --platform=linux/amd64 oven/bun:1-alpine
 
 WORKDIR /app
 
@@ -8,6 +8,6 @@ RUN bun add -g opencode-ai
 # Expose OpenCode default port
 EXPOSE 4096
 
-# Start OpenCode server using bunx (handles binary architecture automatically)
+# Start OpenCode server
 # Using explicit host 0.0.0.0 to allow external connections within Docker network
-CMD ["bunx", "opencode-ai", "serve", "--hostname", "0.0.0.0", "--port", "4096"]
+CMD ["opencode", "serve", "--hostname", "0.0.0.0", "--port", "4096"]
