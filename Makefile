@@ -1,4 +1,4 @@
-.PHONY: help install dev up down logs test clean
+.PHONY: help install build dev up down logs test clean
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -8,6 +8,9 @@ help: ## Show this help message
 
 install: ## Install dependencies
 	cd services/proxy && bun install
+
+build: ## Build Docker images from Dockerfiles
+	docker-compose build
 
 dev: ## Start services in development mode
 	docker-compose up --build
