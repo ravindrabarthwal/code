@@ -1,38 +1,45 @@
 import { Hono } from 'hono';
 import { logger } from 'hono/logger';
-import { proxy } from 'hono/proxy'
-import { env } from 'hono/adapter';
+import { cors } from 'hono/cors';
+import { errorHandler } from './middleware/error-handler';
+import { authRoutes } from './routes/auth';
+import { apiKeyRoutes } from './routes/api-keys';
+import { proxyRoutes } from './routes/proxy';
+import { config } from './config';
 
 const app = new Hono();
 
-// Configuration
-const OPENCODE_HOST = process.env.OPENCODE_HOST || 'opencode';
-const OPENCODE_PORT = process.env.OPENCODE_PORT || '4096';
-const PROXY_PORT = process.env.PROXY_PORT || '3000';
-
-// Logging middleware
+// Global middleware
+app.use('*', errorHandler);
 app.use('*', logger());
+app.use('*', cors({
+  origin: config.baseUrl,
+  credentials: true,
+}));
 
-app.all('/p8n/*', async (c) => {
-  return c.json({ message: 'healthy' });
+// Health check
+app.get('/health', (c) => {
+  return c.json({
+    status: 'healthy',
+    version: '1.0.0',
+    environment: config.nodeEnv,
+  });
 });
 
+// Mount routes
+app.route('/p8n/auth', authRoutes);
+app.route('/p8n/api-keys', apiKeyRoutes);
+app.route('/opencode', proxyRoutes);
 
-// Proxy all /api/opencode/* requests to OpenCode server
-app.all('/opencode/:apiKey/*',  async (c) => {
-  const path = c.req.path;
-  const splits = path.split('/');
-  const openCodePath =  splits.length > 2 ? splits.slice(3).join('/') : '';
-
-  const opencodeUrl = `http://${OPENCODE_HOST}:${OPENCODE_PORT}/${openCodePath}`;
-  const res = await proxy(
-    opencodeUrl,
-      c.req,
-  )
-  return res
+// 404 handler
+app.notFound((c) => {
+  return c.json({ error: 'Not found' }, 404);
 });
 
+// Export for Bun
 export default {
-  port: parseInt(PROXY_PORT),
+  port: config.port,
   fetch: app.fetch,
 };
+
+console.log(`🚀 Proxy server starting on port ${config.port}`);

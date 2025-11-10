@@ -1,4 +1,24 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: auth-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=proxy_auth
+      - POSTGRES_USER=proxy_user
+      - POSTGRES_PASSWORD=proxy_password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - opencode-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U proxy_user -d proxy_auth"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   proxy:
     build:
       context: ./services/proxy
@@ -10,8 +30,18 @@ services:
       - PROXY_PORT=3000
       - OPENCODE_HOST=opencode
       - OPENCODE_PORT=4096
+      - DATABASE_URL=postgresql://proxy_user:proxy_password@postgres:5432/proxy_auth
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - ALLOWED_DOMAINS=${ALLOWED_DOMAINS:-example.com}
+      - BASE_URL=http://localhost:3000
+      - NODE_ENV=development
     depends_on:
-      - opencode
+      postgres:
+        condition: service_healthy
+      opencode:
+        condition: service_started
     networks:
       - opencode-network
     restart: unless-stopped
@@ -39,4 +69,5 @@ networks:
     driver: bridge
 
 volumes:
+  postgres-data:
   opencode-data:

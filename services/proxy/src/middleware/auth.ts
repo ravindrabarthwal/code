@@ -1,0 +1,15 @@
+import { Context, Next } from 'hono';
+import { auth } from '../lib/auth';
+
+export async function requireAuth(c: Context, next: Next) {
+  const session = await auth.api.getSession({
+    headers: c.req.raw.headers,
+  });
+
+  if (!session) {
+    return c.json({ error: 'Authentication required' }, 401);
+  }
+
+  c.set('session', session);
+  await next();
+}

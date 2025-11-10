@@ -348,12 +348,12 @@ export default defineConfig({
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Database container starts successfully: `docker-compose up postgres`
-- [ ] Dependencies install without conflicts: `bun install`
-- [ ] Drizzle schema generates successfully: `bunx drizzle-kit generate`
-- [ ] Database migrations apply cleanly: `bunx drizzle-kit migrate`
-- [ ] Better-auth initialization doesn't throw errors: `bun run typecheck`
-- [ ] Database connection test passes: `bun run test:db`
+- [x] Database container starts successfully: `docker-compose up postgres`
+- [x] Dependencies install without conflicts: `bun install`
+- [x] Drizzle schema generates successfully: `bunx drizzle-kit generate`
+- [x] Database migrations apply cleanly: `bunx drizzle-kit migrate`
+- [x] Better-auth initialization doesn't throw errors: `bun run typecheck`
+- [x] Database connection test passes: `bun run test:db`
 
 #### Manual Verification:
 - [ ] PostgreSQL is accessible on the network
@@ -484,9 +484,9 @@ export default {
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Auth routes respond correctly: `curl http://localhost:3000/p8n/auth/session`
-- [ ] TypeScript compilation passes: `bun run typecheck`
-- [ ] Unit tests for domain validation pass: `bun test auth.test.ts`
+- [x] Auth routes respond correctly: `curl http://localhost:3000/p8n/auth/session`
+- [x] TypeScript compilation passes: `bun run typecheck`
+- [x] Unit tests for domain validation pass: `bun test auth.test.ts`
 
 #### Manual Verification:
 - [ ] Google OAuth flow redirects to Google sign-in
@@ -609,10 +609,10 @@ app.route('/p8n/api-keys', apiKeyRoutes);
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] API key creation endpoint works: `curl -X POST http://localhost:3000/p8n/api-keys/create`
-- [ ] API key listing endpoint works: `curl http://localhost:3000/p8n/api-keys/list`
-- [ ] API key revocation endpoint works: `curl -X DELETE http://localhost:3000/p8n/api-keys/:id`
-- [ ] TypeScript compilation passes: `bun run typecheck`
+- [x] API key creation endpoint works: `curl -X POST http://localhost:3000/p8n/api-keys/create`
+- [x] API key listing endpoint works: `curl http://localhost:3000/p8n/api-keys/list`
+- [x] API key revocation endpoint works: `curl -X DELETE http://localhost:3000/p8n/api-keys/:id`
+- [x] TypeScript compilation passes: `bun run typecheck`
 
 #### Manual Verification:
 - [ ] Authenticated users can create API keys
@@ -749,10 +749,10 @@ export async function errorHandler(c: Context, next: Next) {
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] Valid API key allows proxy access: `curl http://localhost:3000/opencode/oc_valid_key/test`
-- [ ] Invalid API key returns 401: `curl http://localhost:3000/opencode/invalid/test`
-- [ ] Missing API key returns 401: `curl http://localhost:3000/opencode//test`
-- [ ] User headers are forwarded to OpenCode: Check logs
+- [x] Valid API key allows proxy access: `curl http://localhost:3000/opencode/oc_valid_key/test`
+- [x] Invalid API key returns 401: `curl http://localhost:3000/opencode/invalid/test`
+- [x] Missing API key returns 401: `curl http://localhost:3000/opencode//test`
+- [x] User headers are forwarded to OpenCode: Check logs
 
 #### Manual Verification:
 - [ ] API key validation is fast (<50ms)
@@ -959,11 +959,11 @@ CMD ["bun", "run", "start"]
 ### Success Criteria:
 
 #### Automated Verification:
-- [ ] All TypeScript files compile: `bun run typecheck`
-- [ ] Configuration validates correctly: `bun test config.test.ts`
-- [ ] All routes are accessible: `bun test integration.test.ts`
-- [ ] Docker build succeeds: `docker build -t proxy-service .`
-- [ ] Health check endpoint works: `curl http://localhost:3000/health`
+- [x] All TypeScript files compile: `bun run typecheck`
+- [x] Configuration validates correctly: `bun test config.test.ts`
+- [x] All routes are accessible: `bun test integration.test.ts`
+- [x] Docker build succeeds: `docker build -t proxy-service .`
+- [x] Health check endpoint works: `curl http://localhost:3000/health`
 
 #### Manual Verification:
 - [ ] Service starts without errors in production mode
